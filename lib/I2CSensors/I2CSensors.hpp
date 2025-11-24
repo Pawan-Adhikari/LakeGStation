@@ -1,6 +1,7 @@
 #pragma once
-#include <Wire.h>
+#include <Arduino.h>
 #include "Globals.hpp"
+#include <Wire.h>
 
 struct BMPdata {
     float temperature = -1;

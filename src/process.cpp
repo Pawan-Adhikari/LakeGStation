@@ -2,7 +2,7 @@
 #include "I2CSensors.hpp"
 #include "SDcard.hpp"
 #include "HumidityS.hpp"
-
+/*
 QueueHandle_t logQueue;
 SDManager sdManager;
 
@@ -64,3 +64,4 @@ void sdTask(void* pvParameters) {
         }
     }
 }
+*/

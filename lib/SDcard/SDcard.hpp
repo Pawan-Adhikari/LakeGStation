@@ -7,7 +7,8 @@
 #include"HumidityS.hpp"
 #include"LogRecord.hpp"
 
-#define SD_CS_PIN 10
+#define SD_CS_PIN BUILTIN_SDCARD
+#define SD_CONFIG SdSpiConfig(SD_CS_PIN, DEDICATED_SPI, SD_SCK_MHZ(16))
 
 class SDManager{
     SdFs sd;
@@ -20,4 +21,5 @@ public:
     bool sd_writeRecord(const LogRecord& record);
     void flush();
 };
+
 

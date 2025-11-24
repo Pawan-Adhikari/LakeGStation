@@ -1,4 +1,6 @@
 #include"LogRecord.hpp"
+#include "I2CSensors.hpp"
+#include "HumidityS.hpp"
 
 LogRecord::LogRecord(unsigned long t, IMUData i, BMPdata b, HumidityData h){
     timestamp_ms = t;

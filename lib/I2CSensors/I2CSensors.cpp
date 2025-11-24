@@ -1,5 +1,5 @@
-#include <Wire.h>
 #include "I2CSensors.hpp"
+#include <Wire.h>
 
 bool beginBMP(uint8_t address){
     if (bmp.sensorID() == BMP280_CHIPID) return true;
@@ -16,6 +16,7 @@ bool beginBMP(uint8_t address){
 
 bool beginMPU(TwoWire *myWire, uint8_t address){
     if(!mpu.begin(address, myWire)){
+        Serial.println("Failed to initialize MPU6050!");
         return false;
     }
     mpu.setAccelerometerRange(MPU6050_RANGE_8_G); 
@@ -40,11 +41,14 @@ IMUData readMPU(){
     sensors_event_t a, g, temp;
     
     if(!mpu.getEvent(&a, &g, &temp)){
-        if(!beginMPU()){
+        if(!beginMPU(&Wire1)){
             Serial.println("MPU6050 couldn't initialise.");
             return imuReadings;
         }
-        else mpu.getEvent(&a, &g, &temp);
+        else {
+            Serial.println("MPU is initialized and I'm now taking data!");
+            mpu.getEvent(&a, &g, &temp);
+        }
     }
     
     imuReadings.accelX = a.acceleration.x;
@@ -54,7 +58,6 @@ IMUData readMPU(){
     imuReadings.gyroX = g.gyro.x;
     imuReadings.gyroY = g.gyro.y;
     imuReadings.gyroZ = g.gyro.z;
-    
     
     return imuReadings; 
 }

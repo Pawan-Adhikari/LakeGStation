@@ -1,7 +1,6 @@
 #pragma once
-#include<SD.h>
-#include"I2CSensors.hpp"
-#include"HumidityS.hpp"
+#include "I2CSensors.hpp"
+#include "HumidityS.hpp"
 
 struct LogRecord {
     unsigned long timestamp_ms; 
