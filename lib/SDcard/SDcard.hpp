@@ -7,8 +7,7 @@
 #include"HumidityS.hpp"
 #include"LogRecord.hpp"
 
-#define SD_CS_PIN BUILTIN_SDCARD
-#define SD_CONFIG SdSpiConfig(SD_CS_PIN, DEDICATED_SPI, SD_SCK_MHZ(16))
+#define SD_CS_PIN 10
 
 class SDManager{
     SdFs sd;
@@ -17,9 +16,8 @@ class SDManager{
     void createNewFileName();
 
 public:
-    bool sd_begin();
-    bool sd_writeRecord(const LogRecord& record);
+    bool begin();
+    bool writeRecord(const std::vector<LogRecord> records);
     void flush();
 };
-
 

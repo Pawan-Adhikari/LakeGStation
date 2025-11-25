@@ -1,5 +1,6 @@
-#include "I2CSensors.hpp"
 #include <Wire.h>
+#include "I2CSensors.hpp"
+#include "Globals.hpp"
 
 bool beginBMP(uint8_t address){
     if (bmp.sensorID() == BMP280_CHIPID) return true;
@@ -16,7 +17,6 @@ bool beginBMP(uint8_t address){
 
 bool beginMPU(TwoWire *myWire, uint8_t address){
     if(!mpu.begin(address, myWire)){
-        Serial.println("Failed to initialize MPU6050!");
         return false;
     }
     mpu.setAccelerometerRange(MPU6050_RANGE_8_G); 
@@ -41,14 +41,11 @@ IMUData readMPU(){
     sensors_event_t a, g, temp;
     
     if(!mpu.getEvent(&a, &g, &temp)){
-        if(!beginMPU(&Wire1)){
+        if(!beginMPU()){
             Serial.println("MPU6050 couldn't initialise.");
             return imuReadings;
         }
-        else {
-            Serial.println("MPU is initialized and I'm now taking data!");
-            mpu.getEvent(&a, &g, &temp);
-        }
+        else mpu.getEvent(&a, &g, &temp);
     }
     
     imuReadings.accelX = a.acceleration.x;
@@ -59,9 +56,27 @@ IMUData readMPU(){
     imuReadings.gyroY = g.gyro.y;
     imuReadings.gyroZ = g.gyro.z;
     
+    
     return imuReadings; 
 }
 
+void BMPdata::display() const {
+        Serial.println("Temperature, Pressure, and altitude: ");
+        Serial.println(temperature);
+        Serial.println("Celsius");
+        Serial.println(pressure);
+        Serial.println("Pa");
+        Serial.println(altitude);
+        Serial.println("m");
+    }
 
-
-
+void IMUData::display() const {
+        Serial.println("Acceleration, XYZ: ");
+        Serial.println(accelX);
+        Serial.println(accelY);
+        Serial.println(accelZ);
+        Serial.println("Gyroscope, XYZ: ");
+        Serial.println(gyroX);
+        Serial.println(gyroY);
+        Serial.println(gyroZ);
+    }

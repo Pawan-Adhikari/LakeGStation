@@ -1,67 +1,68 @@
 #include "process.hpp"
-#include "I2CSensors.hpp"
-#include "SDcard.hpp"
-#include "HumidityS.hpp"
-/*
-QueueHandle_t logQueue;
-SDManager sdManager;
 
-void createTasks() {
-    // Create Queue
-    logQueue = xQueueCreate(LOG_QUEUE_SIZE, sizeof(LogRecord));
-    if (logQueue == NULL) {
-        Serial.println("Failed to create queue");
-        while(1);
-    }
+void vSensorThread(){
+    unsigned int bmp_count = 0;
+    unsigned int hum_count = 0;
+    LogRecord currentRecord;
+    //uint32_t start_time, finish_time, task_time, next_wake_time = micros();
+    while (1){
+        //start_time = micros();
+        Serial.println("Starting Sensor Thread");
+        currentRecord.timestamp_ms = millis();
+        currentRecord.imu = readMPU();
+        bmp_count++;
+        hum_count++;
 
-    // Initialize SD Card here or in main setup? 
-    // Better to do it in main setup to catch errors early, 
-    // but we need the object. sdManager is global here.
-    if (!sdManager.sd_begin()) {
-        Serial.println("SD Begin Failed!");
-    }
-
-    // Create Tasks
-    xTaskCreate(sensorTask, "SensorTask", 2048, NULL, SENSOR_TASK_PRIORITY, NULL);
-    xTaskCreate(sdTask, "SDTask", 4096, NULL, SD_TASK_PRIORITY, NULL);
-}
-
-void sensorTask(void* pvParameters) {
-    TickType_t xLastWakeTime;
-    const TickType_t xFrequency = pdMS_TO_TICKS(100); // 10Hz
-
-    xLastWakeTime = xTaskGetTickCount();
-
-    for (;;) {
-        LogRecord record;
-        record.timestamp_ms = millis();
-
-        // Read Sensors
-        record.bmp = measBMP();
-        record.imu = readMPU();
-        record.hum = getHumidity();
-
-        // Send to Queue
-        if (xQueueSend(logQueue, &record, 0) != pdPASS) {
-            Serial.println("Queue Full!");
+        if (bmp_count >= 50){
+            currentRecord.bmp = measBMP();
+            bmp_count = 0;
         }
+        if (hum_count >= 500){
+            currentRecord.hum = getHumidity();
+            hum_count = 0;
+        }
+        
+        logBufferMutex.lock();
+        if (logBuffer.full()){
+            logBuffer.pop_front();
+        }
+        logBuffer.push_back(currentRecord);
+        currentRecord.display();
+        logBufferMutex.unlock();
 
-        vTaskDelayUntil(&xLastWakeTime, xFrequency);
+        Serial.println("Completed this sensor thread cycle, its now sleeping.");
+        threads.delay(TARGET_SENSOR_PERIOD/1000); //20ms wait time
     }
 }
 
-void sdTask(void* pvParameters) {
-    LogRecord record;
+void vLogThread(){
+    std::vector<LogRecord> recordsBuffer;
+    recordsBuffer.reserve(50); //TO ensure 50 record space is allocated rather than starting small aand adding space
 
-    for (;;) {
-        if (xQueueReceive(logQueue, &record, portMAX_DELAY) == pdPASS) {
-            if (!sdManager.sd_writeRecord(record)) {
-                Serial.println("SD Write Failed");
+    while (1){
+        Serial.println("Starting Log Thread");
+        logBufferMutex.lock();
+        while (!logBuffer.empty() && recordsBuffer.size() < 50){
+            recordsBuffer.push_back(logBuffer.front());
+            logBuffer.pop_front();
+        }
+        logBufferMutex.unlock();
+
+        if (!recordsBuffer.empty()){
+            if(sdManager.writeRecord(recordsBuffer)){
+                Serial.printf("Wrote record to SD card");
             }
-            
-            // Optional: Flush periodically or after every write
-            // sdManager.flush(); 
+            sdManager.flush();
+            recordsBuffer.clear();
         }
+        Serial.println("Completed this log thread cycle, its now sleeping.");
+        threads.delay(TARGET_LOG_PERIOD/1000); //200ms wait time
+
+        }
+
     }
-}
-*/
+
+
+
+
+

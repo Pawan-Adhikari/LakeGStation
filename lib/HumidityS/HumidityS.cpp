@@ -13,3 +13,10 @@ HumidityData getHumidity(int aPin, int dPin, bool scale){
     hd.isWet = digitalValue;
     return hd;
 }   
+
+ void HumidityData::display() const{
+        Serial.println("Relative Humidity: ");
+        Serial.println(moisture);
+        Serial.println("Wet?");
+        Serial.println(isWet);
+    }

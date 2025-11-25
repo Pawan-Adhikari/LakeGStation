@@ -1,6 +1,4 @@
 #include"LogRecord.hpp"
-#include "I2CSensors.hpp"
-#include "HumidityS.hpp"
 
 LogRecord::LogRecord(unsigned long t, IMUData i, BMPdata b, HumidityData h){
     timestamp_ms = t;
@@ -27,6 +25,7 @@ int LogRecord::toCSV(char* buffer, const size_t bufferSize) const{
         imu.accelX,
         imu.accelY,
         imu.accelZ,
+        
         imu.gyroX,
         imu.gyroY,
         imu.gyroZ,
@@ -35,5 +34,16 @@ int LogRecord::toCSV(char* buffer, const size_t bufferSize) const{
         hum.moisture,
         (int)hum.isWet 
     );
+    Serial.println("Currently converting the following reading to csv:");
+    Serial.println(buffer);
 return len;
+}
+
+void LogRecord::display() const {
+    Serial.println("TimeStamp: ");
+    Serial.println(timestamp_ms);
+    imu.display();
+    bmp.display();
+    hum.display();
+
 }

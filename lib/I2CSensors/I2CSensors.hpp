@@ -1,12 +1,11 @@
 #pragma once
-#include <Arduino.h>
-#include "Globals.hpp"
 #include <Wire.h>
 
 struct BMPdata {
     float temperature = -1;
     float pressure = -1;
     float altitude = -1; 
+    void display() const;
 };
 
 struct IMUData {
@@ -17,6 +16,8 @@ struct IMUData {
     float gyroX = 0.0;
     float gyroY = 0.0;
     float gyroZ = 0.0;
+
+    void display() const ;
 };
 
 bool beginBMP(uint8_t address = 0x76);
