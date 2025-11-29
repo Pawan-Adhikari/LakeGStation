@@ -42,7 +42,7 @@ struct PackedRecord {
     float altitude;
 
     // HumidityData
-    uint8_t isWet;      // bool stored as 1 byte
+    uint8_t isDry;      // bool stored as 1 byte
     float moisture;
 };
 #pragma pack(pop)

@@ -10,7 +10,7 @@ HumidityData getHumidity(int aPin, int dPin, bool scale){
     else{
         hd.moisture = (RAW_MAX_DRY - analogValue) / (RAW_MAX_DRY - RAW_MIN_WET) * 100.0;
     }
-    hd.isWet = digitalValue;
+    hd.isDry = !digitalValue;
     return hd;
 }   
 
@@ -18,5 +18,5 @@ HumidityData getHumidity(int aPin, int dPin, bool scale){
         Serial.println("Relative Humidity: ");
         Serial.println(moisture);
         Serial.println("Wet?");
-        Serial.println(isWet);
+        Serial.println(isDry);
     }

@@ -36,7 +36,7 @@ void setup() {
     Serial.println("SD Card Initialized.");
   }
 
-  // Increase buffer size to prevent blocking (4KB is plenty)
+  // Increase buffer size to prevent blocking 
   static uint8_t serial2_tx_buffer[4096];
   Serial2.addMemoryForWrite(serial2_tx_buffer, sizeof(serial2_tx_buffer));
   

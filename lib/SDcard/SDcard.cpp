@@ -18,7 +18,7 @@ bool SDManager::begin(){
         Serial.println("Failed to open file!");
         return false;
     }
-    logFile.println("Timestamp_ms,Temp_C,Press_Pa,Alt_m,AccelX,AccelY,AccelZ,GyroX,GyroY,GyroZ,Humidity_%,IsWet");
+    logFile.println("Timestamp_ms,Temp_C,Press_Pa,Alt_m,AccelX,AccelY,AccelZ,GyroX,GyroY,GyroZ,Humidity_%,IsDry");
 
     Serial.print("Logging to: ");
     Serial.println(fileName);

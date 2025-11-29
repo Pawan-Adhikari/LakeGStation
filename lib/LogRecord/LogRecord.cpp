@@ -32,7 +32,7 @@ int LogRecord::toCSV(char* buffer, const size_t bufferSize) const{
         
         // Humidity Data
         hum.moisture,
-        (int)hum.isWet 
+        (int)hum.isDry 
     );
     //Serial.println("Currently converting the following reading to csv:");
     //Serial.println(buffer);

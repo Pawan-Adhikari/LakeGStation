@@ -27,7 +27,7 @@ PackedRecord packRecord(const LogRecord &r) {
     p.pressure = r.bmp.pressure;
     p.altitude = r.bmp.altitude;
 
-    p.isWet = r.hum.isWet ? 1 : 0;
+    p.isDry = r.hum.isDry ? 1 : 0;
     p.moisture = r.hum.moisture;
 
     return p;
@@ -36,4 +36,6 @@ PackedRecord packRecord(const LogRecord &r) {
 void sendRecord(const PackedRecord &r) {
     Serial2.write(0xAA);                  // Start byte
     Serial2.write((const uint8_t*)&r, sizeof(PackedRecord));  // Raw bytes
+    Serial.write(0xAA);                  // Start byte
+    Serial.write((const uint8_t*)&r, sizeof(PackedRecord));  // Raw bytes
 }

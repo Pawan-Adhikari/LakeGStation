@@ -16,7 +16,7 @@ void vSensorThread(){
             currentRecord.bmp = measBMP();
             bmp_count = 0;
         }
-        if (hum_count >= 500){
+        if (hum_count >= 50){
             currentRecord.hum = getHumidity();
             hum_count = 0;
         }
@@ -92,7 +92,7 @@ void vSerialOutThread() {
     if (!hasData) {
       serialBufferMutex.lock();
       if (!serialBuffer.empty()) {
-        record = serialBuffer.front();     // simple copy
+        record = serialBuffer.front();     
         serialBuffer.pop_front();
         hasData = true;
       }
@@ -104,9 +104,13 @@ void vSerialOutThread() {
 
         PackedRecord pkt = packRecord(record);
         sendRecord(pkt);
-
+        
         hasData = false;
     } 
       threads.delay(1000);
   }
+}
+
+void vlistenCommandsFromESP(){
+    //this thread will listen to commands in Serial2 sent by ESP in format "$COMMAND\0\n". High priority.
 }
